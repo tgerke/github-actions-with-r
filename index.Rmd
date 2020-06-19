@@ -56,16 +56,19 @@ class: left bottom hide-count
 ]
 ]
 
+.talk-logo[]
+
+.title-image[]
 
 ```{css echo=FALSE}
 /* Define title slide image or logo here */
 .talk-logo {
-  width: 400px;
-  height: 750px;
+  width: 200px;
+  height: 200px;
   position: absolute;
-  top: 6%;
-  right: 7%;
-  /* background-image: url('img/r4ds-cover.png'); */
+  bottom: 3%;
+  right: 2%;
+  background-image: url('img/hex-wall.png');
   background-size: contain;
   background-repeat: no-repeat;
   background-position: contain;
@@ -87,3 +90,19 @@ or to force either to be shown
 - `class: moffitt-slide-logo` shows the logo
 - `class: moffitt-slide-border` shows the border
 -->
+
+
+```{css, echo=FALSE}
+.title-image {
+  width: 200px;
+  height: 200px;
+  position: absolute;
+  top: 3%;
+  left: 2%;
+  background-image: url('img/ghactions.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: contain;
+}
+
+```
