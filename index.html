@@ -46,8 +46,8 @@ June 19, 2020
 &lt;style type="text/css"&gt;
 /* Define title slide image or logo here */
 .talk-logo {
-  width: 200px;
-  height: 200px;
+  width: 250px;
+  height: 250px;
   position: absolute;
   bottom: 3%;
   right: 2%;
@@ -138,6 +138,152 @@ or to force either to be shown
   4. Specify what prebuilt actions you'd like to run before your action
   5. Define your action
   
+---
+### Let's see one in _action_
+
+--
+.h-center.w-30[
+![](img/dadjoke.gif)
+]
+--
+
+* In [this repo](https://github.com/tgerke/rmd-with-ci), I'm going to edit `my_document.Rmd` in the browser, and we'll check back in later
+
+  * In the meantime, we'll go through each GitHub Actions development step in detail
+
+---
+### Step 1: Create the instruction document
+
+* The easiest way to do this is to borrow a template
+
+  * My favorite method: choose one from [`r-lib/actions`](https://github.com/r-lib/actions/tree/master/examples)
+  &lt;br&gt;.small.moffitt-gray[Initiate the file with `usethis::use_github_action("render-readme.yaml")` (or whichever of the action templates you choose)]
+  
+  * Can generate one from scratch, once you know the structure (later)
+  
+  * Many good starter workflows are provided from GitHub [here](https://github.com/actions/starter-workflows)
+
+---
+### Step 2: Specify when you want the action to run
+
+* You will find this block at the top of your `yaml` file
+
+```yaml
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+```
+
+---
+### Step 2a: Get more specific about when to run
+
+* This now runs only when changes are pushed to a specific document
+
+```yaml
+on:
+  push:
+    paths:
+      - my-document/my-document.Rmd
+```
+
+* You can also choose specific days/times for the run to recur
+&lt;br&gt; .small.moffitt-gray[&lt;sup&gt;*&lt;/sup&gt; Uses [POSIX cron syntax](https://pubs.opengroup.org/onlinepubs/9699919799/utilities/crontab.html#tag_20_25_07), the below runs at 4:30am every Wednesday]
+
+```yaml
+on:
+  schedule:
+    - cron: "30 4 * * 3"
+```
+
+---
+### Step 3: Specify how/where you'd like the job to run
+
+* The next `jobs:` block in your `yaml` will have a `runs-on:` argument
+  * Two examples: one on macOS only, the next on 3 separate VMs
+
+```yaml
+jobs:
+  render:
+    name: Render my document
+    runs-on: macOS-latest
+```
+
+```yaml
+    runs-on: ${{ matrix.config.os }}
+    name: ${{ matrix.config.os }}
+    strategy:
+      matrix:
+        config:
+          - os: windows-latest
+          - os: macOS-latest
+          - os: ubuntu-16.04
+```
+
+---
+### Step 4: Set up your environment with prebuilt actions
+
+* These appear under the `uses:` tags
+  * Common tasks: install R, pandoc, other software
+  
+```yaml
+jobs:
+  render:
+    name: Render my document
+    runs-on: macOS-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: r-lib/actions/setup-r@v1
+      - uses: r-lib/actions/setup-pandoc@v1
+      - uses: r-lib/actions/setup-tinytex@v1
+```
+
+---
+### Step 5: Define your action
+
+* Write these as shell scripts under `run:` tags
+  * Can split named steps across several lines with `|`
+
+```yaml
+- name: Install rmarkdown
+  run: Rscript -e 'install.packages("rmarkdown")'
+- name: Render my document to all types
+  run: Rscript -e 'rmarkdown::render("my-document/my-document.Rmd", output_format = "all")'
+- name: Commit results
+  run: |
+    git add my-document/my-document*
+    git commit -m 'Re-build my-document' || echo "No changes to commit"
+    git push origin || echo "No changes to commit"
+```
+
+---
+### The finished `.yaml` product
+
+.h-center.w-70[
+![](img/complete-yaml.png)
+]
+
+---
+### Final thoughts
+
+* Let's check in on [our document](https://github.com/tgerke/rmd-with-ci) which we modified earlier
+
+* Some excellent resources for further learning
+  * Jim Hester's [talk](https://www.jimhester.com/talk/2020-rsc-github-actions/) at rstudio::conf 2020
+  * A [short online book](https://ropenscilabs.github.io/actions_sandbox/) from rOpenSciLabs
+  * A list of [Awesome Actions](https://github.com/sdras/awesome-actions#awesome-actions---)
+  * The [`ghactions` package](https://www.maxheld.de/ghactions/)
+
+.footnote[
+Slides: [https://tgerke.github.io/github-actions-with-r/](https://tgerke.github.io/github-actions-with-r/)
+&lt;br&gt;
+Slide source: [https://github.com/tgerke/github-actions-with-r](https://github.com/tgerke/github-actions-with-r)
+&lt;br&gt;&lt;br&gt;
+&lt;img src="img/twitter-brands.svg" alt="Twitter logo" width="24px"/&gt; @travisgerke
+]
 
 &lt;style type="text/css"&gt;
 .title-image {
@@ -172,6 +318,7 @@ or to force either to be shown
 <script>var slideshow = remark.create({
 "slideNumberFormat": "%current%",
 "highlightStyle": "atom-one-light",
+"highlightLanguage": ["r", "yaml"],
 "highlightLines": true,
 "ratio": "16:9",
 "countIncrementalSlides": true
