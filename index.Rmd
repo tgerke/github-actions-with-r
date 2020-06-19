@@ -115,6 +115,46 @@ or to force either to be shown
 ---
 ### Rendering a `.Rmd` to multiple formats
 
+* Fact: the git learning curve is steep, so it won't always be possible to perform collaborative document editing "the right way"
+
+  * But you _can_ convince non-git collaborators to edit a document in a web browser (also a useful workflow for convenience, e.g. edits by phone)
+
+.h-center.w-70[
+![](img/browser-editing.png)
+]
+
+---
+### Getting browser-based edits into the right format
+
+* Browser editing is fine, but you/consumers need the resulting `.docx`/`.pdf`/`.html`
+
+  * Rendering a `.Rmd` typically requires firing up RStudio, 😢 your browser workflow
+
+--
+
+* But there's a way...
+
+.h-center.w-30[
+![](img/action.gif)
+]
+
+---
+### GitHub Actions
+
+* GitHub deploys a virtual machine(s) for your repository to run tasks that you specify
+
+  * A classic use-case is CI/CD to test software across different operating systems; we're going to work through some simpler tasks here
+
+--
+
+* Using GitHub Actions in 5 steps
+  1. Create the instruction document in `.github/workflows/my_task.yaml`. 
+  <br>.small.moffitt-gray[* Each step below is an edit to `my_task.yaml`]
+  2. Specify when you want the action to run
+  3. Tell GitHub where you'd like to run the job (Ubuntu, Windows, and/or macOS)
+  4. Specify what prebuilt actions you'd like to run before your action
+  5. Define your action
+  
 
 ```{css, echo=FALSE}
 .title-image {
@@ -138,5 +178,8 @@ or to force either to be shown
 }
 .w-30 {
   width: 30%;
+}
+.w-70 {
+  width: 70%;
 }
 ```
